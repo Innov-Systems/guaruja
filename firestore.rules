@@ -1,0 +1,21 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null
+        && request.auth.uid in [
+          "OqZVkL6xRDNXOlhK0k3hwMNXrKa2",
+          "2K56XJFRR6h4pZQapcrWDKxxC7Y2"
+        ];
+    }
+
+    match /reservations/{reservationId} {
+      allow read, create, update, delete: if isOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
