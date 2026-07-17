@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Agenda Area de Lazer Guaruja",
-  description: "Painel interno de reservas da Area de Lazer Guaruja",
+  title: "Área de Lazer Guarujá | Um dia para aproveitar",
+  description:
+    "Conheça a Área de Lazer Guarujá, um espaço reservado para reunir, descansar e celebrar.",
 };
 
 export default function RootLayout({
