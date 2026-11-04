@@ -32,7 +32,9 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import logo from "@/app/icon.png";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   auth,
   allowedEmails,
@@ -121,6 +123,7 @@ export default function AdminPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [formData, setFormData] = useState<ReservationFormData>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [activeView, setActiveView] = useState<"dashboard" | "schedule">(
@@ -293,6 +296,7 @@ export default function AdminPage() {
         });
       }
 
+      setIsReservationModalOpen(false);
       setEditingId(null);
       setFormData({ ...initialForm, date: selectedDate });
     } catch (error) {
@@ -315,6 +319,8 @@ export default function AdminPage() {
   }
 
   function startCreateForDate(dateKey: string) {
+    setIsReservationModalOpen(true);
+    setSaveError("");
     setActiveView("schedule");
     setSelectedDate(dateKey);
     setEditingId(null);
@@ -322,6 +328,8 @@ export default function AdminPage() {
   }
 
   function startEdit(reservation: Reservation) {
+    setIsReservationModalOpen(true);
+    setSaveError("");
     setActiveView("schedule");
     setSelectedDate(reservation.date);
     setEditingId(reservation.id);
@@ -390,18 +398,18 @@ export default function AdminPage() {
 
   if (!authChecked) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f4f7f5] text-slate-900">
-        <LoaderCircle className="h-8 w-8 animate-spin text-teal-700" />
+      <main className="grid min-h-screen place-items-center bg-[#edf4fc] text-slate-900">
+        <LoaderCircle className="h-8 w-8 animate-spin text-blue-700" />
       </main>
     );
   }
 
   if (!authUser) {
     return (
-      <main className="min-h-screen bg-[#f4f7f5] px-4 py-8 text-slate-900 sm:px-6">
+      <main className="min-h-screen bg-[#edf4fc] px-4 py-8 text-slate-900 sm:px-6">
         <section className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-5xl items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-white px-4 py-2 text-sm font-medium text-teal-800 shadow-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-blue-800 shadow-sm">
               <CalendarDays className="h-4 w-4" />
               Area de Lazer Guaruja
             </div>
@@ -431,7 +439,7 @@ export default function AdminPage() {
                 E-mail
               </span>
               <input
-                className="h-11 w-full rounded-[6px] border border-slate-300 px-3 text-base outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                className="h-11 w-full rounded-[6px] border border-slate-300 px-3 text-base outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                 inputMode="email"
                 onChange={(event) => setEmail(event.target.value)}
                 required
@@ -445,7 +453,7 @@ export default function AdminPage() {
               </span>
               <div className="relative">
                 <input
-                  className="h-11 w-full rounded-[6px] border border-slate-300 px-3 pr-11 text-base outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                  className="h-11 w-full rounded-[6px] border border-slate-300 px-3 pr-11 text-base outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                   onChange={(event) => setPassword(event.target.value)}
                   required
                   type={showPassword ? "text" : "password"}
@@ -453,7 +461,7 @@ export default function AdminPage() {
                 />
                 <button
                   aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                  className="absolute right-1 top-1 grid h-9 w-9 place-items-center rounded-[6px] text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+                  className="absolute right-1 top-1 grid h-9 w-9 place-items-center rounded-[6px] text-slate-500 transition hover:bg-yellow-100 hover:text-slate-800"
                   onClick={() => setShowPassword((current) => !current)}
                   type="button"
                 >
@@ -471,7 +479,7 @@ export default function AdminPage() {
               </p>
             ) : null}
             <button
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[6px] bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[6px] bg-yellow-400 px-4 text-sm font-semibold text-slate-900 transition hover:bg-yellow-500 disabled:cursor-not-allowed disabled:bg-slate-300"
               disabled={isSigningIn}
               type="submit"
             >
@@ -489,24 +497,34 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f4f7f5] text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
+    <main className="min-h-screen bg-[#edf4fc] text-slate-900">
+      <header className="border-b border-blue-900 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-sm font-medium text-teal-700">
-              Area de Lazer Guaruja
-            </p>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-950">
-              {activeView === "dashboard" ? "Dashboard" : "Agenda de reservas"}
-            </h1>
+          <div className="flex items-center gap-3">
+            <Image
+              src={logo}
+              alt="Logo da Área de Lazer Guarujá"
+              width={56}
+              height={56}
+              className="h-14 w-14 shrink-0 object-contain"
+              preload
+            />
+            <div>
+              <p className="text-sm font-medium text-blue-100">
+                Área de Lazer Guarujá
+              </p>
+              <h1 className="text-2xl font-semibold tracking-tight text-white">
+                {activeView === "dashboard" ? "Dashboard" : "Agenda de reservas"}
+              </h1>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button
               className={[
                 "inline-flex h-10 items-center gap-2 rounded-[6px] border px-3 text-sm font-medium transition",
                 activeView === "dashboard"
-                  ? "border-teal-700 bg-teal-700 text-white"
-                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
+                  ? "border-yellow-400 bg-yellow-400 text-slate-900 hover:bg-yellow-500"
+                  : "border-slate-300 bg-white text-slate-700 hover:bg-yellow-100",
               ].join(" ")}
               onClick={() => setActiveView("dashboard")}
               type="button"
@@ -518,8 +536,8 @@ export default function AdminPage() {
               className={[
                 "inline-flex h-10 items-center gap-2 rounded-[6px] border px-3 text-sm font-medium transition",
                 activeView === "schedule"
-                  ? "border-teal-700 bg-teal-700 text-white"
-                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
+                  ? "border-yellow-400 bg-yellow-400 text-slate-900 hover:bg-yellow-500"
+                  : "border-slate-300 bg-white text-slate-700 hover:bg-yellow-100",
               ].join(" ")}
               onClick={() => setActiveView("schedule")}
               type="button"
@@ -528,15 +546,7 @@ export default function AdminPage() {
               Agenda
             </button>
             <button
-              className="inline-flex h-10 items-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-              onClick={exportCsv}
-              type="button"
-            >
-              <Download className="h-4 w-4" />
-              Exportar CSV
-            </button>
-            <button
-              className="inline-flex h-10 items-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              className="inline-flex h-10 items-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-100"
               onClick={() => auth && signOut(auth)}
               type="button"
             >
@@ -596,7 +606,7 @@ export default function AdminPage() {
               <div className="flex items-center gap-2">
                 <button
                   aria-label="Mes anterior"
-                  className="grid h-10 w-10 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-slate-50"
+                  className="grid h-10 w-10 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-yellow-100"
                   onClick={() => changeMonth(-1)}
                   type="button"
                 >
@@ -604,7 +614,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   aria-label="Proximo mes"
-                  className="grid h-10 w-10 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-slate-50"
+                  className="grid h-10 w-10 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-yellow-100"
                   onClick={() => changeMonth(1)}
                   type="button"
                 >
@@ -628,14 +638,21 @@ export default function AdminPage() {
                 return (
                   <button
                     className={[
-                      "min-h-24 rounded-[6px] border p-2 text-left transition",
+                      "flex h-18 flex-col justify-start rounded-[6px] border px-2 py-1.5 text-left transition",
                       day.isCurrentMonth
-                        ? "border-slate-200 bg-white hover:border-teal-400"
+                        ? "border-slate-200 bg-white hover:border-yellow-400 hover:bg-yellow-50"
                         : "border-slate-100 bg-slate-50 text-slate-400",
-                      isSelected ? "border-teal-600 ring-2 ring-teal-100" : "",
+                      isSelected ? "border-blue-600 ring-2 ring-blue-100" : "",
                     ].join(" ")}
                     key={day.dateKey}
-                    onClick={() => startCreateForDate(day.dateKey)}
+                    onClick={() => {
+                      setSelectedDate(day.dateKey);
+                      if (!day.isCurrentMonth) {
+                        setMonthDate(
+                          new Date(day.date.getFullYear(), day.date.getMonth(), 1),
+                        );
+                      }
+                    }}
                     type="button"
                   >
                     <div className="flex items-center justify-between">
@@ -643,7 +660,7 @@ export default function AdminPage() {
                         className={[
                           "grid h-7 w-7 place-items-center rounded-full text-sm font-semibold",
                           day.isToday
-                            ? "bg-teal-700 text-white"
+                            ? "bg-blue-700 text-white"
                             : "text-slate-800",
                         ].join(" ")}
                       >
@@ -656,7 +673,7 @@ export default function AdminPage() {
                       ) : null}
                     </div>
                     {count ? (
-                      <p className="mt-3 truncate text-xs font-medium text-teal-800">
+                      <p className="mt-1 w-full truncate text-xs font-medium text-blue-800">
                         {count === 1 ? "1 reserva" : `${count} reservas`}
                       </p>
                     ) : null}
@@ -665,7 +682,9 @@ export default function AdminPage() {
               })}
             </div>
           </section>
+        </div>
 
+        <aside className="lg:sticky lg:top-5 lg:max-h-[calc(100dvh-2.5rem)] lg:overflow-y-auto lg:self-start">
           <section className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -679,7 +698,7 @@ export default function AdminPage() {
                 </p>
               </div>
               <button
-                className="inline-flex h-10 items-center gap-2 rounded-[6px] bg-teal-700 px-3 text-sm font-semibold text-white transition hover:bg-teal-800"
+                className="inline-flex h-10 items-center gap-2 rounded-[6px] bg-yellow-400 px-3 text-sm font-semibold text-slate-900 transition hover:bg-yellow-500"
                 onClick={() => startCreateForDate(selectedDate)}
                 type="button"
               >
@@ -730,7 +749,7 @@ export default function AdminPage() {
                     <div className="flex gap-2">
                       <button
                         aria-label="Editar reserva"
-                        className="grid h-9 w-9 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-slate-50"
+                        className="grid h-9 w-9 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-yellow-100"
                         onClick={() => startEdit(reservation)}
                         type="button"
                       >
@@ -750,35 +769,41 @@ export default function AdminPage() {
               ))}
             </div>
           </section>
-        </div>
-
-        <aside className="lg:sticky lg:top-5 lg:self-start">
+          {saveError ? (
+            <p role="alert" className="mt-4 rounded-[6px] border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+              {saveError}
+            </p>
+          ) : null}
+        </aside>
+      </section>
+      )}
+      {isReservationModalOpen ? (
+        <ReservationModal
+          isSaving={isSaving}
+          onClose={() => setIsReservationModalOpen(false)}
+        >
           <form
             className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm"
             onSubmit={handleSave}
           >
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-slate-950">
+                <h2 id="reservation-modal-title" className="text-xl font-semibold text-slate-950">
                   {editingId ? "Editar reserva" : "Nova reserva"}
                 </h2>
                 <p className="text-sm text-slate-500">
                   {formatShortDate(formData.date)}
                 </p>
               </div>
-              {editingId ? (
-                <button
-                  aria-label="Cancelar edicao"
-                  className="grid h-9 w-9 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-slate-50"
-                  onClick={() => {
-                    setEditingId(null);
-                    setFormData({ ...initialForm, date: selectedDate });
-                  }}
-                  type="button"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              ) : null}
+              <button
+                aria-label="Fechar formulário"
+                disabled={isSaving}
+                className="grid h-9 w-9 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-yellow-100"
+                onClick={() => setIsReservationModalOpen(false)}
+                type="button"
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
 
             <div className="space-y-4">
@@ -787,7 +812,8 @@ export default function AdminPage() {
                   Cliente
                 </span>
                 <input
-                  className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                  autoFocus
+                  className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                   onChange={(event) =>
                     setFormData({ ...formData, customerName: event.target.value })
                   }
@@ -802,7 +828,7 @@ export default function AdminPage() {
                     Data
                   </span>
                   <input
-                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                     onChange={(event) => {
                       setSelectedDate(event.target.value);
                       setFormData({ ...formData, date: event.target.value });
@@ -817,7 +843,7 @@ export default function AdminPage() {
                     Status
                   </span>
                   <select
-                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                     onChange={(event) =>
                       setFormData({
                         ...formData,
@@ -841,7 +867,7 @@ export default function AdminPage() {
                     Inicio
                   </span>
                   <input
-                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                     onChange={(event) =>
                       setFormData({ ...formData, startTime: event.target.value })
                     }
@@ -855,7 +881,7 @@ export default function AdminPage() {
                     Fim
                   </span>
                   <input
-                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                     onChange={(event) =>
                       setFormData({ ...formData, endTime: event.target.value })
                     }
@@ -871,7 +897,7 @@ export default function AdminPage() {
                   Telefone
                 </span>
                 <input
-                  className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                  className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                   inputMode="tel"
                   onChange={(event) =>
                     setFormData({ ...formData, phone: event.target.value })
@@ -886,7 +912,7 @@ export default function AdminPage() {
                     Valor total
                   </span>
                   <input
-                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                     min="0"
                     onChange={(event) =>
                       setFormData({
@@ -904,7 +930,7 @@ export default function AdminPage() {
                     Sinal
                   </span>
                   <input
-                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                    className="h-10 w-full rounded-[6px] border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                     min="0"
                     onChange={(event) =>
                       setFormData({
@@ -924,7 +950,7 @@ export default function AdminPage() {
                   Observacoes
                 </span>
                 <textarea
-                  className="min-h-24 w-full resize-y rounded-[6px] border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                  className="min-h-24 w-full resize-y rounded-[6px] border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                   onChange={(event) =>
                     setFormData({ ...formData, notes: event.target.value })
                   }
@@ -940,7 +966,7 @@ export default function AdminPage() {
             ) : null}
 
             <button
-              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-[6px] bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-[6px] bg-yellow-400 px-4 text-sm font-semibold text-slate-900 transition hover:bg-yellow-500 disabled:cursor-not-allowed disabled:bg-slate-300"
               disabled={isSaving}
               type="submit"
             >
@@ -952,10 +978,56 @@ export default function AdminPage() {
               {editingId ? "Salvar alteracoes" : "Salvar reserva"}
             </button>
           </form>
-        </aside>
-      </section>
-      )}
+        </ReservationModal>
+      ) : null}
     </main>
+  );
+}
+
+function ReservationModal({
+  children,
+  isSaving,
+  onClose,
+}: {
+  children: React.ReactNode;
+  isSaving: boolean;
+  onClose: () => void;
+}) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    const previousOverflow = document.body.style.overflow;
+    dialog?.showModal();
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      dialog?.close();
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  return (
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="reservation-modal-title"
+      className="fixed inset-0 m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-lg bg-white p-0 text-slate-900 shadow-xl backdrop:bg-slate-950/50"
+      onCancel={(event) => {
+        event.preventDefault();
+        if (!isSaving) onClose();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget && !isSaving) {
+          const bounds = event.currentTarget.getBoundingClientRect();
+          if (
+            event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom
+          ) onClose();
+        }
+      }}
+    >
+      {children}
+    </dialog>
   );
 }
 
@@ -1010,7 +1082,7 @@ function DashboardView({
           <div className="flex items-center gap-2 rounded-[6px] border border-slate-300 bg-white p-1">
             <button
               aria-label="Mes anterior"
-              className="grid h-8 w-8 place-items-center rounded-[5px] text-slate-700 transition hover:bg-slate-50"
+              className="grid h-8 w-8 place-items-center rounded-[5px] text-slate-700 transition hover:bg-yellow-100"
               onClick={() => onChangeMonth(-1)}
               type="button"
             >
@@ -1025,7 +1097,7 @@ function DashboardView({
             />
             <button
               aria-label="Proximo mes"
-              className="grid h-8 w-8 place-items-center rounded-[5px] text-slate-700 transition hover:bg-slate-50"
+              className="grid h-8 w-8 place-items-center rounded-[5px] text-slate-700 transition hover:bg-yellow-100"
               onClick={() => onChangeMonth(1)}
               type="button"
             >
@@ -1033,7 +1105,7 @@ function DashboardView({
             </button>
           </div>
           <button
-            className="inline-flex h-10 items-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            className="inline-flex h-10 items-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-100"
             onClick={onOpenSchedule}
             type="button"
           >
@@ -1041,7 +1113,7 @@ function DashboardView({
             Abrir agenda
           </button>
           <button
-            className="inline-flex h-10 items-center gap-2 rounded-[6px] bg-teal-700 px-3 text-sm font-semibold text-white transition hover:bg-teal-800"
+            className="inline-flex h-10 items-center gap-2 rounded-[6px] bg-yellow-400 px-3 text-sm font-semibold text-slate-900 transition hover:bg-yellow-500"
             onClick={onCreateReservation}
             type="button"
           >
@@ -1121,7 +1193,7 @@ function DashboardView({
             </div>
             <button
               aria-label="Abrir agenda"
-              className="grid h-9 w-9 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-slate-50"
+              className="grid h-9 w-9 place-items-center rounded-[6px] border border-slate-300 text-slate-700 transition hover:bg-yellow-100"
               onClick={onOpenSchedule}
               type="button"
             >
@@ -1132,7 +1204,7 @@ function DashboardView({
           <div className="divide-y divide-slate-200">
             {upcomingReservations.map((reservation) => (
               <button
-                className="flex w-full flex-col gap-2 py-3 text-left transition hover:bg-slate-50 sm:flex-row sm:items-center sm:justify-between"
+                className="flex w-full flex-col gap-2 py-3 text-left transition hover:bg-yellow-100 sm:flex-row sm:items-center sm:justify-between"
                 key={reservation.id}
                 onClick={() => onSelectReservation(reservation)}
                 type="button"
@@ -1190,7 +1262,7 @@ function Metric({
 }) {
   return (
     <div className="rounded-[8px] border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="mb-3 inline-grid h-9 w-9 place-items-center rounded-[6px] bg-teal-50 text-teal-700">
+      <div className="mb-3 inline-grid h-9 w-9 place-items-center rounded-[6px] bg-blue-50 text-blue-700">
         {icon}
       </div>
       <p className="text-sm font-medium text-slate-500">{label}</p>
@@ -1201,10 +1273,10 @@ function Metric({
 
 function SetupMissing() {
   return (
-    <main className="min-h-screen bg-[#f4f7f5] px-4 py-8 text-slate-900 sm:px-6">
+    <main className="min-h-screen bg-[#edf4fc] px-4 py-8 text-slate-900 sm:px-6">
       <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl items-center">
         <div className="rounded-[8px] border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-4 inline-grid h-11 w-11 place-items-center rounded-[6px] bg-teal-50 text-teal-700">
+          <div className="mb-4 inline-grid h-11 w-11 place-items-center rounded-[6px] bg-blue-50 text-blue-700">
             <CalendarDays className="h-5 w-5" />
           </div>
           <h1 className="text-2xl font-semibold text-slate-950">
