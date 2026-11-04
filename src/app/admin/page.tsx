@@ -32,6 +32,7 @@ import {
   WalletCards,
   X,
 } from "lucide-react";
+import Swal from "sweetalert2";
 import Image from "next/image";
 import logo from "@/app/icon.png";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -263,6 +264,42 @@ export default function AdminPage() {
       setAuthError("Nao foi possivel entrar. Confira e-mail e senha.");
     } finally {
       setIsSigningIn(false);
+    }
+  }
+
+  async function handleLogout() {
+    if (!auth) return;
+
+    const result = await Swal.fire({
+      title: "Deseja sair?",
+      text: "Tem certeza que deseja sair da sua conta?",
+      icon: "question",
+      iconColor: "#1d4ed8",
+      showCancelButton: true,
+      confirmButtonText: "Sim",
+      cancelButtonText: "Cancelar",
+      focusCancel: true,
+      reverseButtons: true,
+      buttonsStyling: false,
+      customClass: {
+        popup: "rounded-xl",
+        confirmButton: "rounded-md bg-yellow-400 px-5 py-3 font-semibold text-slate-900 hover:bg-yellow-500 mx-1",
+        cancelButton: "rounded-md bg-slate-100 px-5 py-3 font-semibold text-slate-700 hover:bg-slate-200 mx-1",
+      },
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await signOut(auth);
+    } catch {
+      await Swal.fire({
+        title: "Não foi possível sair",
+        text: "Tente novamente.",
+        icon: "error",
+        confirmButtonText: "Entendi",
+        confirmButtonColor: "#1d4ed8",
+      });
     }
   }
 
@@ -548,7 +585,7 @@ export default function AdminPage() {
             </button>
             <button
               className="inline-flex h-10 items-center justify-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-100"
-              onClick={() => auth && signOut(auth)}
+              onClick={handleLogout}
               type="button"
             >
               <LogOut className="h-4 w-4" />
