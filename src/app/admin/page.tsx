@@ -408,25 +408,25 @@ export default function AdminPage() {
     return (
       <main className="min-h-screen bg-[#edf4fc] px-4 py-8 text-slate-900 sm:px-6">
         <section className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-5xl items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-blue-800 shadow-sm">
-              <CalendarDays className="h-4 w-4" />
-              Area de Lazer Guaruja
-            </div>
-            <div className="space-y-4">
-              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-                Agenda interna de reservas
-              </h1>
-              <p className="max-w-xl text-lg leading-8 text-slate-600">
-                Controle datas, pagamentos e contatos em um painel privado para
-                voce e seu pai.
-              </p>
-            </div>
+          <div className="flex justify-center">
+            <Image
+              src={logo}
+              alt="Logo da Área de Lazer Guarujá"
+              width={400}
+              height={400}
+              sizes="(min-width: 1024px) 400px, (min-width: 640px) 224px, 160px"
+              className="h-40 w-40 object-contain sm:h-56 sm:w-56 lg:h-100 lg:w-100"
+              preload
+            />
           </div>
 
+          <div className="mx-auto w-full max-w-md">
+            <h1 className="mb-5 text-center text-2xl font-semibold tracking-tight text-blue-950 sm:text-3xl">
+              Agenda interna de reservas
+            </h1>
           <form
             onSubmit={handleLogin}
-            className="rounded-[8px] border border-slate-200 bg-white p-6 shadow-sm"
+            className="mx-auto w-full max-w-md rounded-[8px] border border-slate-200 bg-white p-6 shadow-sm"
           >
             <div className="mb-6 space-y-2">
               <h2 className="text-2xl font-semibold text-slate-950">Entrar</h2>
@@ -491,6 +491,7 @@ export default function AdminPage() {
               Acessar agenda
             </button>
           </form>
+          </div>
         </section>
       </main>
     );
@@ -500,7 +501,7 @@ export default function AdminPage() {
     <main className="min-h-screen bg-[#edf4fc] text-slate-900">
       <header className="border-b border-blue-900 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 max-sm:justify-center">
             <Image
               src={logo}
               alt="Logo da Área de Lazer Guarujá"
@@ -509,7 +510,7 @@ export default function AdminPage() {
               className="h-14 w-14 shrink-0 object-contain"
               preload
             />
-            <div>
+            <div className="max-sm:text-center">
               <p className="text-sm font-medium text-blue-100">
                 Área de Lazer Guarujá
               </p>
@@ -518,10 +519,10 @@ export default function AdminPage() {
               </h1>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-3 items-center gap-2 sm:flex sm:flex-wrap">
             <button
               className={[
-                "inline-flex h-10 items-center gap-2 rounded-[6px] border px-3 text-sm font-medium transition",
+                "inline-flex h-10 items-center justify-center gap-2 rounded-[6px] border px-3 text-sm font-medium transition",
                 activeView === "dashboard"
                   ? "border-yellow-400 bg-yellow-400 text-slate-900 hover:bg-yellow-500"
                   : "border-slate-300 bg-white text-slate-700 hover:bg-yellow-100",
@@ -534,7 +535,7 @@ export default function AdminPage() {
             </button>
             <button
               className={[
-                "inline-flex h-10 items-center gap-2 rounded-[6px] border px-3 text-sm font-medium transition",
+                "inline-flex h-10 items-center justify-center gap-2 rounded-[6px] border px-3 text-sm font-medium transition",
                 activeView === "schedule"
                   ? "border-yellow-400 bg-yellow-400 text-slate-900 hover:bg-yellow-500"
                   : "border-slate-300 bg-white text-slate-700 hover:bg-yellow-100",
@@ -546,7 +547,7 @@ export default function AdminPage() {
               Agenda
             </button>
             <button
-              className="inline-flex h-10 items-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-100"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-100"
               onClick={() => auth && signOut(auth)}
               type="button"
             >
@@ -1078,8 +1079,8 @@ function DashboardView({
             Visao geral do mes
           </h2>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <div className="flex items-center gap-2 rounded-[6px] border border-slate-300 bg-white p-1">
+        <div className="flex flex-wrap gap-2 max-sm:w-full">
+          <div className="flex items-center gap-2 max-sm:w-full rounded-[6px] border border-slate-300 bg-white p-1">
             <button
               aria-label="Mes anterior"
               className="grid h-8 w-8 place-items-center rounded-[5px] text-slate-700 transition hover:bg-yellow-100"
@@ -1090,7 +1091,7 @@ function DashboardView({
             </button>
             <input
               aria-label="Selecionar mes"
-              className="h-8 min-w-34 border-0 bg-transparent px-2 text-sm font-medium text-slate-700 outline-none"
+              className="h-8 min-w-34 max-sm:min-w-0 max-sm:flex-1 border-0 bg-transparent px-2 text-sm font-medium text-slate-700 outline-none"
               onChange={(event) => onSetMonth(event.target.value)}
               type="month"
               value={toMonthInputValue(monthDate)}
@@ -1105,7 +1106,7 @@ function DashboardView({
             </button>
           </div>
           <button
-            className="inline-flex h-10 items-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-100"
+            className="inline-flex h-10 items-center justify-center gap-2 max-sm:w-full rounded-[6px] border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-100"
             onClick={onOpenSchedule}
             type="button"
           >
@@ -1113,7 +1114,7 @@ function DashboardView({
             Abrir agenda
           </button>
           <button
-            className="inline-flex h-10 items-center gap-2 rounded-[6px] bg-yellow-400 px-3 text-sm font-semibold text-slate-900 transition hover:bg-yellow-500"
+            className="inline-flex h-10 items-center justify-center gap-2 max-sm:w-full rounded-[6px] bg-yellow-400 px-3 text-sm font-semibold text-slate-900 transition hover:bg-yellow-500"
             onClick={onCreateReservation}
             type="button"
           >
