@@ -2,7 +2,6 @@ import Image from "next/image";
 import {
   ArrowDown,
   Clock3,
-  Film,
   Images,
   MessageCircle,
   ShieldCheck,
@@ -15,6 +14,45 @@ import {
 } from "lucide-react";
 import logo from "./icon.png";
 import styles from "./page.module.css";
+
+const galleryPhotos = [
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.27.15.jpeg",
+    "alt": "Piscina e área externa"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.26.22 (1).jpeg",
+    "alt": "Churrasqueira e balcão"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.31.41.jpeg",
+    "alt": "Piscina vista de perto"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.26.27 (2).jpeg",
+    "alt": "Mesa de sinuca"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.26.26 (2).jpeg",
+    "alt": "Mesa de tênis de mesa"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.27.14.jpeg",
+    "alt": "Área de convivência"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.26.20 (2).jpeg",
+    "alt": "Cozinha de apoio"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.33.12.jpeg",
+    "alt": "Quarto de apoio"
+  },
+  {
+    "src": "/media/imagens/WhatsApp Image 2026-11-08 at 21.26.25.jpeg",
+    "alt": "Piscina e iluminação à noite"
+  }
+];
 
 const highlights = [
   {
@@ -77,7 +115,7 @@ export default function Home() {
           fill
           priority
           sizes="100vw"
-          src="/media/leisure-hero.webp"
+          src="/media/imagens/WhatsApp Image 2026-11-08 at 21.27.14.jpeg"
         />
         <div className={styles.heroShade} />
 
@@ -199,48 +237,44 @@ export default function Home() {
             <h2>Um pouco do clima que espera por você.</h2>
           </div>
           <p className={styles.mediaNotice}>
-            Imagens ilustrativas nesta versão. As fotos reais do espaço serão
-            adicionadas em seguida.
+            Conheça a área de lazer em fotos reais e veja o vídeo do espaço.
           </p>
         </div>
 
         <div className={styles.galleryGrid}>
-          <figure className={styles.galleryMain}>
-            <Image
-              alt="Piscina e área de convivência em uma imagem ilustrativa"
-              fill
-              sizes="(max-width: 900px) 100vw, 66vw"
-              src="/media/leisure-pool.webp"
-            />
-            <figcaption>
-              <Images aria-hidden="true" size={18} />
-              Piscina e área externa
-            </figcaption>
-          </figure>
-
-          <figure className={styles.galleryTall}>
-            <Image
-              alt="Espaço com churrasqueira em uma imagem ilustrativa"
-              fill
-              sizes="(max-width: 900px) 100vw, 34vw"
-              src="/media/leisure-barbecue.webp"
-            />
-            <figcaption>
-              <UtensilsCrossed aria-hidden="true" size={18} />
-              Espaço para reunir
-            </figcaption>
-          </figure>
-
-          <div className={styles.videoPlaceholder}>
-            <div className={styles.videoMark}>
-              <Film aria-hidden="true" size={26} />
-            </div>
-            <div>
-              <p>Vídeo do espaço</p>
-              <span>Em breve, um passeio completo por cada ambiente.</span>
-            </div>
-          </div>
+          {galleryPhotos.map((photo) => (
+            <figure className={styles.galleryPhoto} key={photo.src}>
+              <a href={photo.src} target="_blank" rel="noreferrer"
+                aria-label={`Ver foto ampliada: ${photo.alt}`}>
+                <Image
+                  alt={photo.alt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 900px) 50vw, 33vw"
+                  src={photo.src}
+                />
+              </a>
+              <figcaption>
+                <Images aria-hidden="true" size={18} />
+                {photo.alt}
+              </figcaption>
+            </figure>
+          ))}
         </div>
+
+        <figure className={styles.galleryVideo}>
+          <video
+            aria-label="Vídeo da área de lazer"
+            controls
+            playsInline
+            preload="none"
+            poster={galleryPhotos[0].src}
+          >
+            <source src="/media/videos/video1.mp4" type="video/mp4" />
+            Seu navegador não suporta este vídeo.
+            <a href="/media/videos/video1.mp4">Baixar vídeo do espaço</a>
+          </video>
+          <figcaption>Conheça o espaço em vídeo</figcaption>
+        </figure>
       </section>
 
       <section className={styles.closing}>
