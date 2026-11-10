@@ -1,6 +1,8 @@
 import Image from "next/image";
 import {
   ArrowDown,
+  ArrowUp,
+  ArrowUpRight,
   Clock3,
   Images,
   MessageCircle,
@@ -298,9 +300,51 @@ export default function Home() {
         </a>
       </section>
 
-      <footer className={styles.footer}>
-        <p>Área de Lazer Guarujá</p>
-        <p>Um espaço para reunir, descansar e celebrar.</p>
+      <footer className={styles.footer} role="contentinfo">
+        <div className={styles.footerContent}>
+          <div className={styles.footerAbout}>
+            <a className={styles.footerBrand} href="#inicio">
+              <Image alt="" height={56} src={logo} width={56} />
+              <span>Área de Lazer Guarujá</span>
+            </a>
+            <p>Um espaço para reunir, descansar e celebrar.</p>
+          </div>
+
+          <nav aria-labelledby="footer-navigation" className={styles.footerGroup}>
+            <h2 id="footer-navigation">Explore</h2>
+            <a href="#espaco">O espaço</a>
+            <a href="#estrutura">Estrutura</a>
+            <a href="#galeria">Galeria</a>
+          </nav>
+
+          <div className={styles.footerGroup}>
+            <h2>Reservas</h2>
+            <a href={whatsappUrl} rel="noopener noreferrer" target="_blank">
+              <MessageCircle aria-hidden="true" size={17} />
+              Falar no WhatsApp
+            </a>
+            <a href="#inicio">
+              <ArrowUp aria-hidden="true" size={17} />
+              Voltar ao início
+            </a>
+          </div>
+        </div>
+
+        <div className={styles.footerBottom}>
+          <p>© {new Date().getFullYear()} Área de Lazer Guarujá</p>
+          <p>
+            Site desenvolvido pela{" "}
+            <a
+              className={styles.footerCredit}
+              href="https://primesolves.vercel.app/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              PrimeSolves
+              <ArrowUpRight aria-hidden="true" size={15} />
+            </a>
+          </p>
+        </div>
       </footer>
     </main>
   );
